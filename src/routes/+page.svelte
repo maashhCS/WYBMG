@@ -1,5 +1,6 @@
 <script>
 	import { fade, fly } from 'svelte/transition';
+	import { base } from '$app/paths';
 	let currentLine = 0;
 	let answer = '';
 	let answered = false;
@@ -83,7 +84,7 @@
 						</button>
 						<button class="no" on:click|stopPropagation={sayNo}>No 😢</button>
 					</div>
-                    <img src="/imgs/cat.gif" alt="cat asking question" class="responsive ">
+                    <img src="{base}/imgs/cat.gif" alt="cat asking question" class="responsive ">
 				{/if}
 			</div>
 		{/if}
