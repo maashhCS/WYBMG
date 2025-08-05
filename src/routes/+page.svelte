@@ -43,6 +43,10 @@
 	}));
 </script>
 
+<svelte:head>
+	<link rel="preload" href="{base}/imgs/cat.gif" as="image">
+</svelte:head>
+
 <div
 	class="letter-container"
 	on:click={nextLine}
