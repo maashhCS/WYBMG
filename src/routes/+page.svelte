@@ -5,17 +5,28 @@
 	let answer = '';
 	let answered = false;
 	let yesScale = 1;
+	let currentNoAnswer = '';
+	let noClickCount = 0;
 
 	const lines = [
 		'Hi Liane ❤️',
 		'I built this little letter just for you...',
 		"Because you're truly special.",
 		'Since we started talking, everything feels a little lighter.',
-		'You make me smile. A lot.',
+		'You make me smile. A LOT.',
 		'And I keep thinking about you.',
 		'So I just have one very important question...',
 		'Will you be my girlfriend? 💌'
 	];
+
+	const noAnswers = [
+		'Are you sure? 🥺',
+		'But I thought we had a deal... 😢',
+		'You drive a hard bargain!',
+		"Okay, I'll keep trying...",
+		'Maybe just one more chance?'
+	];
+
 
 	function nextLine() {
 		if (currentLine < lines.length - 1) {
@@ -29,7 +40,13 @@
 	}
 
 	function sayNo() {
-		yesScale += 0.2;
+        yesScale += 0.2;
+		if (noClickCount < noAnswers.length) {
+			currentNoAnswer = noAnswers[noClickCount];
+			noClickCount++;
+		} else {
+			currentNoAnswer = "Seriously? Let's try 'Yes'! 😄";
+		}
 	}
 
 	const heartCount = 100;
@@ -44,7 +61,7 @@
 </script>
 
 <svelte:head>
-	<link rel="preload" href="{base}/imgs/cat.gif" as="image">
+	<link rel="preload" href="{base}/imgs/cat.gif" as="image" />
 </svelte:head>
 
 <div
@@ -72,30 +89,47 @@
 	</div>
 
 	<div class="content">
-		{#if currentLine < lines.length - 1}
-			<p in:fly={{ y: 20, duration: 500 }} out:fade>{lines[currentLine]}</p>
-		{:else}
-			<div class="question" in:fly={{ y: 20, duration: 500 }} out:fade>
-				<p>{lines[currentLine]}</p>
-				{#if !answered}
-					<div class="buttons mb-4" transition:fade>
-						<button
-							class="yes"
-							on:click|stopPropagation={sayYes}
-							style="transform: scale({yesScale})"
-						>
-							Yes 💖
-						</button>
-						<button class="no" on:click|stopPropagation={sayNo}>No 😢</button>
-					</div>
-                    <img src="{base}/imgs/cat.gif" alt="cat asking question" class="responsive ">
-				{/if}
-			</div>
-		{/if}
+		{#key currentLine}
+			{#if currentLine < lines.length - 1}
+				<p in:fly={{ y: 20, duration: 500 }} out:fade={{ duration: 300 }}>{lines[currentLine]}</p>
+			{:else}
+				<div class="question" in:fly={{ y: 20, duration: 500, delay: 300 }}>
+					<p>{lines[currentLine]}</p>
+					{#key answered}
+						{#if !answered}
+							{#if !answered}
+								<div class="buttons mb-4" in:fade out:fade={{ duration: 300 }}>
+									<button
+										class="yes"
+										on:click|stopPropagation={sayYes}
+										style="transform: scale({yesScale})"
+									>
+										Yes 💖
+									</button>
+									<button class="no" on:click|stopPropagation={sayNo}>No 😢</button>
+								</div>
 
-		{#if answer}
-			<p class="answer" in:fly={{ y: 20, duration: 500 }} out:fade>{answer}</p>
-		{/if}
+								{#if currentNoAnswer}
+									<p class="no-answer" in:fade>{currentNoAnswer}</p>
+								{/if}
+
+								<img
+									src="{base}/imgs/cat.gif"
+									alt="cat asking question"
+									class="responsive"
+									in:fade
+									out:fade={{ duration: 300 }}
+								/>
+							{:else}
+								<p class="answer" in:fly={{ y: 20, duration: 500, delay: 300 }}>{answer}</p>
+							{/if}
+						{:else}
+							<p class="answer" in:fly={{ y: 20, duration: 500, delay: 300 }}>{answer}</p>
+						{/if}
+					{/key}
+				</div>
+			{/if}
+		{/key}
 	</div>
 </div>
 
