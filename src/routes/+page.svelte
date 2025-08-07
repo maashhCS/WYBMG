@@ -4,6 +4,7 @@
 	let currentLine = 0;
 	let answer = '';
 	let answered = false;
+	let answeredNo = false;
 	let yesScale = 1;
 	let currentNoAnswer = '';
 	let noClickCount = 0;
@@ -19,14 +20,7 @@
 		'Will you be my girlfriend? 💌'
 	];
 
-	const noAnswers = [
-		'Are you sure? 🥺',
-		'But I thought we had a deal... 😢',
-		'You drive a hard bargain!',
-		"Okay, I'll keep trying...",
-		'Maybe just one more chance?'
-	];
-
+	const noAnswers = ['Are you sure? 🥺'];
 
 	function nextLine() {
 		if (currentLine < lines.length - 1) {
@@ -40,12 +34,15 @@
 	}
 
 	function sayNo() {
-        yesScale += 0.2;
+		yesScale += 0.2;
 		if (noClickCount < noAnswers.length) {
 			currentNoAnswer = noAnswers[noClickCount];
 			noClickCount++;
 		} else {
-			currentNoAnswer = "Seriously? Let's try 'Yes'! 😄";
+			answer =
+				'Oh no... I understand. I just wanted to let you know how I feel. I still think you are amazing! 💔';
+			answered = true;
+			answeredNo = true;
 		}
 	}
 
@@ -62,10 +59,11 @@
 
 <svelte:head>
 	<link rel="preload" href="{base}/imgs/cat.gif" as="image" />
+	<link rel="preload" href="{base}/imgs/hai.gif" as="image" />
 </svelte:head>
 
 <div
-	class="letter-container"
+	class="letter-container bg-gradient-to-br from-pink-200 via-rose-100 to-amber-100"
 	on:click={nextLine}
 	on:keydown={(e) => (e.key === 'Enter' || e.key === ' ') && nextLine()}
 	role="button"
@@ -94,37 +92,46 @@
 				<p in:fly={{ y: 20, duration: 500 }} out:fade={{ duration: 300 }}>{lines[currentLine]}</p>
 			{:else}
 				<div class="question" in:fly={{ y: 20, duration: 500, delay: 300 }}>
-					<p>{lines[currentLine]}</p>
+					{#if !answered}
+						<p>{lines[currentLine]}</p>
+					{/if}
 					{#key answered}
 						{#if !answered}
-							{#if !answered}
-								<div class="buttons mb-4" in:fade out:fade={{ duration: 300 }}>
-									<button
-										class="yes"
-										on:click|stopPropagation={sayYes}
-										style="transform: scale({yesScale})"
-									>
-										Yes 💖
-									</button>
-									<button class="no" on:click|stopPropagation={sayNo}>No 😢</button>
-								</div>
+							<div class="buttons mb-4" in:fade out:fade={{ duration: 300 }}>
+								<button
+									class="yes"
+									on:click|stopPropagation={sayYes}
+									style="transform: scale({yesScale})"
+								>
+									Yes 💖
+								</button>
+								<button class="no" on:click|stopPropagation={sayNo}>No 😢</button>
+							</div>
 
-								{#if currentNoAnswer}
-									<p class="no-answer" in:fade>{currentNoAnswer}</p>
-								{/if}
-
-								<img
-									src="{base}/imgs/cat.gif"
-									alt="cat asking question"
-									class="responsive"
-									in:fade
-									out:fade={{ duration: 300 }}
-								/>
-							{:else}
-								<p class="answer" in:fly={{ y: 20, duration: 500, delay: 300 }}>{answer}</p>
+							{#if currentNoAnswer}
+								<p class="no-answer" in:fade>{currentNoAnswer}</p>
 							{/if}
+
+							<img
+								src="{base}/imgs/cat.gif"
+								alt="cat asking question"
+								class="responsive"
+								in:fade
+								out:fade={{ duration: 300 }}
+							/>
 						{:else}
 							<p class="answer" in:fly={{ y: 20, duration: 500, delay: 300 }}>{answer}</p>
+							{#if !answeredNo}
+								<div class="align-items-center flex justify-center">
+									<img
+										src="{base}/imgs/hai.gif"
+										alt="cat jumping happily"
+										class="responsive"
+										in:fade
+										out:fade={{ duration: 300 }}
+									/>
+								</div>
+							{/if}
 						{/if}
 					{/key}
 				</div>
@@ -134,10 +141,13 @@
 </div>
 
 <style lang="scss">
-	$bg-gradient: linear-gradient(135deg, #fce4ec, #fff5e4);
+	@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap');
+
 	$heart-color: #ff5ca2;
 	$text-color: #c3195d;
 	$card-color: rgba(255, 255, 255, 0.85);
+
+	$font-family: 'Dancing Script', cursive;
 
 	.letter-container {
 		position: relative;
@@ -147,13 +157,13 @@
 		flex-direction: column;
 		height: 100vh;
 		width: 100%;
-		background: $bg-gradient;
-		font-family: 'Segoe UI', sans-serif;
 		text-align: center;
 		padding: 1rem;
 		overflow: hidden;
 		cursor: pointer;
 		outline: none;
+		font-family: $font-family;
+		color: $text-color;
 	}
 
 	.big-heart {
