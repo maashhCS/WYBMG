@@ -28,9 +28,30 @@
 		}
 	}
 
+	let showHeartExplosion = false;
+	/** @type {{id: string, x: number, y: number, delay: number}[]} */
+	let heartExplosionItems = [];
+
+	function createHeartExplosion() {
+		heartExplosionItems = Array.from({ length: 30 }, (_, i) => ({
+			id: crypto.randomUUID(),
+			x: Math.random() * 200 - 100, // seitlich verteilt
+			y: Math.random() * -150 - 50, // nach oben
+			delay: i * 0.02
+		}));
+		showHeartExplosion = true;
+
+		// Nach 2 Sekunden wieder ausblenden
+		setTimeout(() => {
+			showHeartExplosion = false;
+		}, 2000);
+	}
+
 	function sayYes() {
-		answer = "YAAAY! I'm so happy right now! 🥰";
+		answer =
+			"YAAAY! I'm so happy right now! 🥰\n P.S. There’s still so much I want to tell you… 💖";
 		answered = true;
+		createHeartExplosion();
 	}
 
 	function sayNo() {
@@ -85,6 +106,16 @@
 			></span>
 		{/each}
 	</div>
+	{#if showHeartExplosion}
+		<div class="heart-explosion">
+			{#each heartExplosionItems as h (h.id)}
+				<span
+					class="explosion-heart"
+					style="--x: {h.x}px; --y: {h.y}px; animation-delay: {h.delay}s">💖</span
+				>
+			{/each}
+		</div>
+	{/if}
 
 	<div class="content">
 		{#key currentLine}
@@ -234,7 +265,7 @@
 		box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
 
 		p {
-			font-size: 1.6rem;
+			font-size: 2.2rem;
 			line-height: 1.8;
 			margin: 1rem 0;
 			color: $text-color;
@@ -287,6 +318,7 @@
 		font-size: 1.6rem;
 		color: darken($heart-color, 10%);
 		font-weight: bold;
+		white-space: pre-line;
 	}
 
 	.extra-btn,
@@ -348,6 +380,33 @@
 		}
 		to {
 			opacity: 1;
+		}
+	}
+
+	/* Herzchen-Explosion */
+	.heart-explosion {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		pointer-events: none;
+		z-index: 2;
+	}
+
+	.explosion-heart {
+		position: absolute;
+		font-size: 1.5rem;
+		animation: explode 1.2s ease-out forwards;
+	}
+
+	@keyframes explode {
+		0% {
+			transform: translate(0, 0) scale(1);
+			opacity: 1;
+		}
+		100% {
+			transform: translate(var(--x), var(--y)) scale(1.5);
+			opacity: 0;
 		}
 	}
 </style>
