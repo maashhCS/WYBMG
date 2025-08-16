@@ -79,6 +79,20 @@
 </script>
 
 <svelte:head>
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link
+		rel="preload"
+		href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap"
+		as="style"
+	/>
+	<link
+		rel="preload"
+		href="https://fonts.gstatic.com/s/dancingscript/v25/If2cXTr6YS-zF4S-kcSWSVi_sxjsohD9F50Ruu7BMSo3ROp-.woff2"
+		as="font"
+		type="font/woff2"
+		crossorigin
+	/>
 	<link rel="preload" href="{base}/imgs/cat.gif" as="image" />
 	<link rel="preload" href="{base}/imgs/hai.gif" as="image" />
 </svelte:head>
@@ -172,6 +186,7 @@
 </div>
 
 <style lang="scss">
+	@use 'sass:color';
 	@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap');
 
 	$heart-color: #ff5ca2;
@@ -186,11 +201,11 @@
 		align-items: center;
 		justify-content: center;
 		flex-direction: column;
-		height: 100vh;
+		min-height: 100vh;
 		width: 100%;
 		text-align: center;
-		padding: 1rem;
-		overflow: hidden;
+		padding: 2rem 1rem;
+		overflow: auto;
 		cursor: pointer;
 		outline: none;
 		font-family: $font-family;
@@ -225,8 +240,6 @@
 		backdrop-filter: blur(10px);
 		-webkit-backdrop-filter: blur(10px);
 		border-radius: 20px;
-		border: 1px solid rgba(255, 255, 255, 0.18);
-		box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 
 		.heart {
 			position: absolute;
@@ -259,10 +272,17 @@
 		position: relative;
 		z-index: 1;
 		max-width: 600px;
+		width: 100%;
 		background: $card-color;
 		padding: 2rem;
 		border-radius: 1rem;
 		box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+		margin: auto;
+
+		@media (max-width: 768px) {
+			padding: 1.5rem;
+			margin: 1rem auto;
+		}
 
 		p {
 			font-size: 2.2rem;
@@ -298,7 +318,7 @@
 				color: white;
 
 				&:hover {
-					background-color: lighten($heart-color, 10%);
+					background-color: color.scale($heart-color, $lightness: 10%);
 				}
 			}
 
@@ -315,8 +335,8 @@
 
 	.answer {
 		margin-top: 2rem;
-		font-size: 1.6rem;
-		color: darken($heart-color, 10%);
+		font-size: clamp(1.5rem, 2vw, 2.2rem);
+		color: color.scale($heart-color, $lightness: -14.7%);
 		font-weight: bold;
 		white-space: pre-line;
 	}
@@ -383,7 +403,6 @@
 		}
 	}
 
-	/* Herzchen-Explosion */
 	.heart-explosion {
 		position: absolute;
 		top: 50%;
